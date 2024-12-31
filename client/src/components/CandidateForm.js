@@ -38,13 +38,13 @@ export default function CandidateForm({ contract, web3, currentAccount }) {
       <Stack spacing={2}>
         <TextField
           id="outlined-basic"
-          label="Candiate Name"
+          label="Candidate Name"
           variant="outlined"
           value={name}
           onChange={handleNameChange}
         />
         <Button variant="contained" type="submit">
-          Add Candiates
+          Add Candidates
         </Button>
       </Stack>
     </Box>

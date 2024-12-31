@@ -61,7 +61,7 @@ const Navbar = () => {
               textDecoration: "none",
             }}
           >
-            Voting System
+            E-Voting 
           </Typography>
 
           <Box sx={{ flexGrow: 0 }}>

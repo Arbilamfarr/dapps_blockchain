@@ -18,9 +18,11 @@ export default function CoverPage() {
   return (
     <CoverLayout
       sxBackground={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundColor: "#7fc7d9", // Average color of the background image.
+        backgroundImage: `linear-gradient(135deg, rgba(57, 201, 249, 0.8), rgba(127, 199, 217, 0.8)), url(${backgroundImage})`, // Gradient with the background image
         backgroundPosition: "center",
+        backgroundSize: "cover", // Ensure the background image covers the entire layout
+        backgroundBlendMode: "overlay", // Blend the background image with the gradient
+        height: "100vh", // Full screen height
       }}
     >
       {/* Increase the network loading priority of the background image. */}
@@ -29,14 +31,20 @@ export default function CoverPage() {
         src={backgroundImage}
         alt="increase priority"
       />
-      <Typography color="inherit" align="center" variant="h2" marked="center">
+      <Typography
+        color="inherit"
+        align="center"
+        variant="h2"
+        marked="center"
+        sx={{ fontWeight: "bold" }}
+      >
         Blockchain Based Voting System
       </Typography>
       <Typography
         color="inherit"
         align="center"
         variant="h5"
-        sx={{ mb: 4, mt: { sx: 4, sm: 10 } }}
+        sx={{ mb: 4, mt: { sx: 4, sm: 10 }, fontStyle: "italic" }}
       >
         A decentralized voting system that is built on the Ethereum blockchain.
       </Typography>
@@ -44,7 +52,11 @@ export default function CoverPage() {
         color="secondary"
         variant="contained"
         size="large"
-        sx={{ minWidth: 200 }}
+        sx={{
+          minWidth: 200,
+          borderRadius: "50px", // Rounded button for a modern look
+          boxShadow: "0px 10px 20px rgba(57, 201, 249, 0.3)", // Soft shadow effect
+        }}
         onClick={handleClick}
       >
         Enter the Voting System

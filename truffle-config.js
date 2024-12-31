@@ -18,10 +18,9 @@
  *
  */
 
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
-//
-// const fs = require('fs');
-// const mnemonic = fs.readFileSync(".secret").toString().trim();
+const HDWalletProvider = require("@truffle/hdwallet-provider");
+const fs = require("fs");
+const mnemonic = fs.readFileSync(".secret").toString().trim();
 const path = require("path");
 
 module.exports = {
@@ -47,6 +46,19 @@ module.exports = {
       host: "127.0.0.1", // Localhost (default: none)
       port: 7545, // Standard Ethereum port (default: none)
       network_id: "*", // Any network (default: none)
+    },
+    sepolia: {
+      provider: () =>
+        new HDWalletProvider(
+          mnemonic,
+          `https://eth-sepolia.g.alchemy.com/v2/7hqzwWyiVckZHXyOsZEdf6A0YebGkZw7`
+        ),
+      network_id: 11155111,
+      gas: 5500000,
+      confirmations: 2,
+      timeoutBlocks: 300,
+      networkCheckTimeout: 10000,
+      skipDryRun: true,
     },
     //
     // An additional network, but with some advanced options…
@@ -119,40 +131,3 @@ module.exports = {
   //   }
   // }
 };
-
-
-
-
-// const HDWalletProvider = require("@truffle/hdwallet-provider");
-// const fs = require("fs");
-
-// // Chargez la phrase mnémotechnique depuis le fichier .secret
-// const mnemonic = fs.readFileSync(".secret").toString().trim();
-
-// module.exports = {
-//   networks: {
-//     sepolia: {
-//       provider: () =>
-//         new HDWalletProvider(
-//           mnemonic,
-//           `https://eth-sepolia.g.alchemy.com/v2/7hqzwWyiVckZHXyOsZEdf6A0YebGkZw7`
-//         ),
-//       network_id: 11155111, // ID du réseau Sepolia
-//       gas: 4465030, // Limite de gaz pour les transactions
-//       gasPrice: web3.utils.toWei("10", "gwei"), // Prix du gaz
-//     },
-//   },
-//   compilers: {
-//     solc: {
-//       version: "0.8.14", // Fetch exact version from solc-bin (default: truffle's version)
-//       // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
-//       // settings: {          // See the solidity docs for advice about optimization and evmVersion
-//       //  optimizer: {
-//       //    enabled: false,
-//       //    runs: 200
-//       //  },
-//       //  evmVersion: "byzantium"
-//       // }
-//     },
-//   },
-// };
