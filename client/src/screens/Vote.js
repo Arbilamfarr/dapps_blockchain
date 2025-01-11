@@ -36,8 +36,9 @@ export default function Vote({ role, contract, web3, currentAccount }) {
   const voteCandidate = async (candidate) => {
     try {
       if (contract) {
-        await contract.methods.vote(candidate).send({ from: currentAccount });
-        getCandidates();
+         const response = await contract.methods.vote(candidate).send({ from: currentAccount });
+        console.log(response)
+         getCandidates();
       }
     } catch (error) {
       console.error("Error:", error);
