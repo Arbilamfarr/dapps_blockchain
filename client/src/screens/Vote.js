@@ -4,6 +4,7 @@ import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
+import axios from "axios";
 
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
@@ -22,13 +23,22 @@ export default function Vote({ role, contract, web3, currentAccount }) {
 
   const getCandidates = async () => {
     if (contract) {
-      const count = await contract.methods.candidatesCount().call();
-      const temp = [];
-      for (let i = 0; i < count; i++) {
-        const candidate = await contract.methods.getCandidateDetails(i).call();
-        temp.push({ name: candidate[0], votes: candidate[1] });
+      const res = await axios.get("http://localhost:5000/api/candidates");
+
+      const cands = res.data;
+
+      // const count = await contract.methods.candidatesCount().call();
+      // const temp = [];
+      for (let candidate of cands) {
+        const BCDetails = await contract.methods
+          .getCandidateDetails(candidate.candidateId)
+          .call();
+        console.log(BCDetails);
+        // candidate.voteCount = BCDetails.voteCount;
+        // candidate.candidateAddress = BCDetails.candidateAddress;
       }
-      setCandidates(temp);
+      console.log(cands);
+      setCandidates(cands);
       // setLoading(false);
     }
   };
@@ -36,9 +46,11 @@ export default function Vote({ role, contract, web3, currentAccount }) {
   const voteCandidate = async (candidate) => {
     try {
       if (contract) {
-         const response = await contract.methods.vote(candidate).send({ from: currentAccount });
-        console.log(response)
-         getCandidates();
+        const response = await contract.methods
+          .vote(candidate)
+          .send({ from: currentAccount });
+        console.log(response);
+        getCandidates();
       }
     } catch (error) {
       console.error("Error:", error);
@@ -58,6 +70,7 @@ export default function Vote({ role, contract, web3, currentAccount }) {
   }, [contract]);
 
   const handleVoteChange = (event) => {
+    console.log(event.target.value);
     setVote(event.target.value);
   };
 
@@ -101,8 +114,13 @@ export default function Vote({ role, contract, web3, currentAccount }) {
                         key={index}
                         labelPlacement="top"
                         control={<Radio />}
-                        value={index}
-                        label={<Candidate id={index} name={candidate.name} />}
+                        value={candidate.candidateId}
+                        label={
+                          <Candidate
+                            id={candidate.candidateId}
+                            name={candidate.name}
+                          />
+                        }
                       />
                     ))}
                   </RadioGroup>

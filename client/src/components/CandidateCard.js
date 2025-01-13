@@ -1,39 +1,79 @@
-import * as React from "react";
-import Card from "@mui/material/Card";
-import CardHeader from "@mui/material/CardHeader";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
+import React from "react";
+import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
-export default function Candidate({ id, name, voteCount }) {
+export default function Candidate({ id, name, voteCount, address }) {
   const IMG =
     "https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=1400";
 
   return (
-    <Card sx={{ maxWidth: 345, minWidth: 300 }}>
-      <CardHeader
-        title={
-          <Typography align="center" variant="subtitle1">
-            {name}
-          </Typography>
-        }
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        maxWidth: 350,
+        padding: 3,
+        margin: "auto",
+        borderRadius: 3,
+        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.6)",
+        backgroundColor: "#1e1e1e",
+        color: "#ffffff",
+      }}
+    >
+      {/* Candidate Image */}
+      <Box
+        component="img"
+        src={IMG}
+        alt={name}
+        sx={{
+          width: "100%",
+          height: 200,
+          objectFit: "cover",
+          borderRadius: 3,
+          marginBottom: 2,
+        }}
       />
-      <CardContent sx={{ padding: 0 }}>
-        <CardMedia
-          component="img"
-          alt="green iguana"
-          height="140"
-          image={IMG}
-        />
-      </CardContent>
-      <CardActions sx={{ justifyContent: "center" }}>
+
+      {/* Candidate Details */}
+      <Box sx={{ textAlign: "start", width: "100%" }}>
+        {/* Candidate Name */}
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: "bold",
+            marginBottom: 1,
+            color: "#e0e0e0",
+          }}
+        >
+          {name}
+        </Typography>
+
+        {/* Vote Count */}
         {voteCount && (
-          <Typography align="center" variant="">
-            <strong>{voteCount}</strong> votes
+          <Typography
+            variant="body1"
+            sx={{
+              color: "#81c784",
+              fontWeight: "medium",
+              marginBottom: 1,
+            }}
+          >
+            Votes: {voteCount}
           </Typography>
         )}
-      </CardActions>
-    </Card>
+
+        {/* Address */}
+        {address && (
+          <Typography
+            variant="body2"
+            sx={{
+              color: "#bdbdbd",
+            }}
+          >
+            {address}
+          </Typography>
+        )}
+      </Box>
+    </Box>
   );
 }

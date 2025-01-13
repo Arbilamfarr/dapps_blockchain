@@ -3,23 +3,41 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import { Stack } from "@mui/material";
+import axios from "axios";
 
 export default function CandidateForm({ contract, web3, currentAccount }) {
   const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
 
   const handleForm = async (event) => {
     event.preventDefault();
     try {
-      await contract.methods.addCandidate(name).send({ from: currentAccount });
+      // Make POST request to your backend
+      const response = await axios.post(
+        "http://localhost:5000/api/candidates",
+        {
+          name,
+        }
+      );
+      const candidateId = response.data.candidateId;
+
+      await contract.methods
+        .addCandidate(address, candidateId)
+        .send({ from: currentAccount });
       console.log("candidate added");
     } catch (error) {
       console.log(error);
     }
     setName("");
+    setAddress("");
   };
 
   const handleNameChange = (event) => {
     setName(event.target.value);
+  };
+
+  const handleAddressChange = (event) => {
+    setAddress(event.target.value);
   };
 
   return (
@@ -42,6 +60,14 @@ export default function CandidateForm({ contract, web3, currentAccount }) {
           variant="outlined"
           value={name}
           onChange={handleNameChange}
+        />
+
+        <TextField
+          id="outlined-basic"
+          label="Candidate Address"
+          variant="outlined"
+          value={address}
+          onChange={handleAddressChange}
         />
         <Button variant="contained" type="submit">
           Add Candidates

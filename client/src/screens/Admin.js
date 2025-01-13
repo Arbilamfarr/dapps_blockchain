@@ -8,6 +8,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
+import axios from "axios";
 
 import Candidate from "../components/CandidateCard";
 import CandidateForm from "../components/CandidateForm";
@@ -22,16 +23,20 @@ export default function Admin({ role, contract, web3, currentAccount }) {
 
   const getCandidates = async () => {
     if (contract) {
-      console.log(contract);
-      const count = await contract.methods.candidatesCount().call();
-      const temp = [];
-      for (let i = 0; i < count; i++) {
-        const candidate = await contract.methods.getCandidateDetails(i).call();
-        temp.push({ name: candidate[0], votes: candidate[1] });
+      const res = await axios.get("http://localhost:5000/api/candidates");
+
+      const cands = res.data;
+
+      for (let candidate of cands) {
+        const BCDetails = await contract.methods
+          .getCandidateDetails(candidate.candidateId)
+          .call();
+        candidate.address = BCDetails["0"];
+        candidate.votes = BCDetails["1"];
       }
-      setCandidates(temp);
+      console.log(cands);
+      setCandidates(cands);
       setLoading(false);
-      console.log(temp);
     }
   };
 
@@ -179,6 +184,7 @@ export default function Admin({ role, contract, web3, currentAccount }) {
                         id={index}
                         name={candidate.name}
                         voteCount={candidate.votes}
+                        address={candidate.address}
                       />
                     </Box>
                   ))}

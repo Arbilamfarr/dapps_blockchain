@@ -10,7 +10,7 @@ contract Election {
 
     struct Candidate {
         uint256 id;
-        string name;
+        address candidateAddress;
         uint256 voteCount;
     }
 
@@ -19,13 +19,13 @@ contract Election {
 
     struct Voter {
         uint256 id;
-        string name;
+        bool isVoter;
     }
 
     mapping(uint256 => Candidate) candidates;
     mapping(address => bool) voted;
 
-    mapping(address => bool) isVoter;
+    mapping(address => Voter) voters;
 
     uint256 public candidatesCount = 0;
 
@@ -50,32 +50,33 @@ contract Election {
         electionState = State.Ended;
     }
 
-    function addCandidate(string memory _name) public {
+    function addCandidate(address _address, uint _candidateId) public {
         require(owner == msg.sender, "Only owner can add candidates");
         require(
             electionState == State.NotStarted,
             "Election has already started"
         );
 
-        candidates[candidatesCount] = Candidate(candidatesCount, _name, 0);
+        candidates[_candidateId] = Candidate(_candidateId, _address, 0);
         candidatesCount++;
     }
 
-    function addVoter(address _voter) public {
+    function addVoter(address _voter, uint _voterId) public {
         require(owner == msg.sender, "Only owner can add voter");
-        require(!isVoter[_voter], "Voter already added");
+        require(!voters[_voter].isVoter, "Voter already added");
         require(
             electionState == State.NotStarted,
             "Voter can't be added after election started"
         );
 
-        isVoter[_voter] = true;
+        voters[_voter].isVoter = true;
+        voters[_voter].id = _voterId;
     }
 
     function getRole(address _current) public view returns (uint256) {
         if (owner == _current) {
             return 1;
-        } else if (isVoter[_current]) {
+        } else if (voters[_current].isVoter) {
             return 2;
         } else {
             return 3;
@@ -87,12 +88,8 @@ contract Election {
             electionState == State.InProgress,
             "Election is not in progress"
         );
-        require(isVoter[msg.sender], "Non authorised user cannot vote");
+        require(voters[msg.sender].isVoter, "Non authorised user cannot vote");
         require(!voted[msg.sender], "You have already voted");
-        require(
-            _candidateId >= 0 && _candidateId < candidatesCount,
-            "Invalid candidate ID"
-        );
 
         candidates[_candidateId].voteCount++;
         voted[msg.sender] = true;
@@ -100,17 +97,11 @@ contract Election {
         emit Voted(_candidateId);
     }
 
-    function getCandidateDetails(uint256 _candidateId)
-        public
-        view
-        returns (string memory, uint256)
-    {
-        require(
-            _candidateId >= 0 && _candidateId < candidatesCount,
-            "Invalid candidate ID"
-        );
+    function getCandidateDetails(
+        uint256 _candidateId
+    ) public view returns (address, uint256) {
         return (
-            candidates[_candidateId].name,
+            candidates[_candidateId].candidateAddress,
             candidates[_candidateId].voteCount
         );
     }
